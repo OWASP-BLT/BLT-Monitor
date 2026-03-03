@@ -21,8 +21,8 @@ on:
         default: 'OWASP'
 
 concurrency:
-  group: website-monitor
-  cancel-in-progress: true
+  group: website-monitor-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 # Set the permissions for the workflow
 permissions:
@@ -43,6 +43,25 @@ jobs:
       - name: Monitor all websites
         id: monitor
         run: |
+          fetch_url() {
+            local target_url="$1"
+            local content_var="$2"
+            local code_var="$3"
+            local fetched_content=""
+            local fetched_code=""
+
+            if ! fetched_content=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors "$target_url"); then
+              echo "Warning: failed to fetch content from $target_url"
+              fetched_content=""
+            fi
+            if ! fetched_code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 --retry 2 --retry-all-errors "$target_url"); then
+              fetched_code="000"
+            fi
+
+            printf -v "$content_var" '%s' "$fetched_content"
+            printf -v "$code_var" '%s' "$fetched_code"
+          }
+
           # If manual trigger with custom URL, use that
           if [ -n "${{ github.event.inputs.website_url }}" ]; then
             echo "Manual trigger detected - monitoring single URL"
@@ -67,13 +86,7 @@ jobs:
 
             # Monitor the website
             start_time=$(date +%s%3N)
-            if ! content=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors "$url"); then
-              echo "Warning: failed to fetch content from $url"
-              content=""
-            fi
-            if ! response_code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 --retry 2 --retry-all-errors "$url"); then
-              response_code="000"
-            fi
+            fetch_url "$url" content response_code
             end_time=$(date +%s%3N)
             duration_ms=$((end_time - start_time))
             duration_s=$(awk "BEGIN {printf \"%.3f\", $duration_ms/1000}")
@@ -136,10 +149,7 @@ jobs:
           if [ -n "${{ github.event.inputs.website_url }}" ]; then
             # Manual trigger - use provided values
             start_time=$(date +%s%3N)
-            if ! content=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors "${{ github.event.inputs.website_url }}"); then
-              echo "Warning: failed to fetch content from ${{ github.event.inputs.website_url }}"
-              content=""
-            fi
+            fetch_url "${{ github.event.inputs.website_url }}" content response_code
             end_time=$(date +%s%3N)
             duration_ms=$((end_time - start_time))
 
