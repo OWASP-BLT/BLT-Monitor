@@ -20,19 +20,23 @@ on:
         required: false
         default: 'OWASP'
 
+concurrency:
+  group: website-monitor
+  cancel-in-progress: true
+
 # Set the permissions for the workflow
 permissions:
   contents: write
-  pull-requests: write
   pages: write
   id-token: write
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history for all branches and tags
 
@@ -63,8 +67,13 @@ jobs:
 
             # Monitor the website
             start_time=$(date +%s%3N)
-            content=$(curl -s "$url")
-            response_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+            if ! content=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors "$url"); then
+              echo "Warning: failed to fetch content from $url"
+              content=""
+            fi
+            if ! response_code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 --retry 2 --retry-all-errors "$url"); then
+              response_code="000"
+            fi
             end_time=$(date +%s%3N)
             duration_ms=$((end_time - start_time))
             duration_s=$(awk "BEGIN {printf \"%.3f\", $duration_ms/1000}")
@@ -91,7 +100,7 @@ jobs:
               echo "- $name ($url) - keyword '$keyword' not found" >> "$failed_monitors_file"
             fi
 
-            echo "Result: $status (keyword: $keyword_status, duration: ${duration_s}s)"
+            echo "Result: $status (http: $response_code, keyword: $keyword_status, duration: ${duration_s}s)"
 
             # Update status file for this monitor
             status_file="status-${id}.csv"
@@ -127,7 +136,10 @@ jobs:
           if [ -n "${{ github.event.inputs.website_url }}" ]; then
             # Manual trigger - use provided values
             start_time=$(date +%s%3N)
-            content=$(curl -s "${{ github.event.inputs.website_url }}")
+            if ! content=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors "${{ github.event.inputs.website_url }}"); then
+              echo "Warning: failed to fetch content from ${{ github.event.inputs.website_url }}"
+              content=""
+            fi
             end_time=$(date +%s%3N)
             duration_ms=$((end_time - start_time))
 
@@ -174,7 +186,7 @@ jobs:
 
       - name: Notify Slack on failure
         if: steps.monitor.outputs.has_failures == 'true'
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.27.1
         with:
           payload: |
             {
