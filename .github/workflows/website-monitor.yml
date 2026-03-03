@@ -21,8 +21,8 @@ on:
         default: 'OWASP'
 
 concurrency:
-  group: website-monitor-${{ github.ref }}-${{ github.event_name }}
-  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+  group: website-monitor-${{ github.ref }}
+  cancel-in-progress: true
 
 # Set the permissions for the workflow
 permissions:
@@ -49,14 +49,17 @@ jobs:
             local code_var="$3"
             local fetched_content=""
             local fetched_code=""
+            local response_body_file=""
 
-            if ! fetched_content=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors "$target_url"); then
+            response_body_file=$(mktemp)
+            if fetched_code=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors -o "$response_body_file" -w "%{http_code}" "$target_url"); then
+              fetched_content=$(cat "$response_body_file")
+            else
               echo "Warning: failed to fetch content from $target_url"
               fetched_content=""
-            fi
-            if ! fetched_code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 --retry 2 --retry-all-errors "$target_url"); then
               fetched_code="000"
             fi
+            rm -f "$response_body_file"
 
             printf -v "$content_var" '%s' "$fetched_content"
             printf -v "$code_var" '%s' "$fetched_code"
