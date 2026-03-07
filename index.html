@@ -7,71 +7,250 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#E10101',
+              'neutral-border': '#E5E5E5',
+              'dark-base': '#111827',
+              'dark-surface': '#1F2937'
+            },
+            fontFamily: {
+              sans: ['Manrope', 'Segoe UI', 'system-ui', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-      body { font-family: 'Segoe UI', system-ui, sans-serif; }
-      .card-hover { transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease; }
-      .card-hover:hover { transform: translateY(-1px); }
+      :root {
+        --blt-primary: #E10101;
+        --blt-border: #E5E5E5;
+      }
+
+      body {
+        font-family: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+      }
+
+      .hero-bg {
+        background:
+          radial-gradient(circle at 10% 10%, rgba(225, 1, 1, 0.08), transparent 34%),
+          radial-gradient(circle at 90% 0%, rgba(225, 1, 1, 0.06), transparent 36%),
+          linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+      }
+
+      .surface-card {
+        background: #ffffff;
+        border: 1px solid var(--blt-border);
+      }
+
+      .card-hover {
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+      }
+
+      .card-hover:hover {
+        transform: translateY(-2px);
+        border-color: #fecaca;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+      }
+
+      .btn-primary {
+        background: var(--blt-primary);
+        color: #fff;
+        border: 1px solid var(--blt-primary);
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .btn-primary:hover {
+        background: #b91c1c;
+        border-color: #b91c1c;
+      }
+
+      .btn-outline {
+        color: var(--blt-primary);
+        border: 1px solid var(--blt-primary);
+        background: #fff;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      .btn-outline:hover {
+        background: var(--blt-primary);
+        color: #fff;
+      }
+
+      .input-base {
+        border: 1px solid #9ca3af;
+        border-radius: 0.375rem;
+        padding: 0.5rem 1rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .input-base:focus {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 1px #dc2626;
+      }
     </style>
 </head>
-<body class="bg-[#0a0f1e] text-[#e2e8f0] m-0 p-0">
+<body class="bg-[#fafafa] text-gray-900 m-0 p-0">
 
-<nav class="bg-[#0f172a] border-b border-slate-800 px-4 sm:px-6 py-3 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-3 mb-4 flex items-center justify-between">
-    <div class="flex items-center gap-2 font-bold text-lg">
+<nav class="bg-white border-b border-neutral-border px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-2 font-extrabold text-lg">
       <img src="https://api.owaspblt.org/logo.png" class="w-[30px]" alt="BLT"/>
-      <span class="text-[#e2e8f0]">OWASP <span class="text-red-500">BLT</span></span>
+      <span class="text-gray-900">BLT <span class="text-primary">Monitor</span></span>
     </div>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2">
       <a href="https://github.com/OWASP-BLT/BLT-Monitor" target="_blank" rel="noopener noreferrer"
-         class="flex items-center gap-1.5 text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg transition-colors font-medium">
-        <i class="fa-brands fa-github"></i>
+         class="btn-primary inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg font-semibold">
+        <i class="fa-brands fa-github" aria-hidden="true"></i>
         <span>GitHub</span>
       </a>
     </div>
   </div>
 </nav>
 
-<div class="max-w-7xl mx-auto p-4 sm:p-6 my-2 sm:my-6">
+<main class="hero-bg">
+  <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
 
-  <!-- Header Card -->
-  <div class="bg-[#0f172a] border border-slate-800 rounded-2xl p-5 sm:p-7 mb-6 relative overflow-hidden">
-    <!-- subtle red glow top-left -->
-    <div class="absolute -top-10 -left-10 w-48 h-48 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
-    <h1 class="text-2xl sm:text-3xl font-bold flex items-center gap-2.5 mb-1.5 relative z-10">
-      <i class="fa-solid fa-globe text-red-500"></i>
-      <span>Website Monitors</span>
-    </h1>
-    <p class="text-slate-400 text-sm sm:text-base mb-4 relative z-10">Monitor multiple websites and view their uptime status at a glance</p>
-    <div class="flex items-center gap-2 flex-wrap relative z-10">
-      <a href="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml" rel="noopener noreferrer" target="_blank"
-         class="inline-block rounded overflow-hidden border border-slate-700">
-        <img alt="Website Monitor Status" src="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml/badge.svg">
-      </a>
-      <a href="https://github.com/OWASP-BLT/BLT-Monitor/stargazers" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-yellow-700/60 bg-yellow-900/30 text-yellow-300 text-xs font-medium hover:bg-yellow-800/50 hover:shadow-md hover:shadow-yellow-900/40 transition-all">
-        <i class="fa-regular fa-star"></i> Stars <span id="gh-stars" class="font-bold">...</span>
-      </a>
-      <a href="https://github.com/OWASP-BLT/BLT-Monitor/forks" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-blue-700/60 bg-blue-900/30 text-blue-300 text-xs font-medium hover:bg-blue-800/50 hover:shadow-md hover:shadow-blue-900/40 transition-all">
-        <i class="fa-solid fa-code-fork"></i> Forks <span id="gh-forks" class="font-bold">...</span>
-      </a>
-    </div>
-  </div>
+    <section class="surface-card rounded-2xl p-6 sm:p-8">
+      <div class="grid lg:grid-cols-2 gap-6 items-start">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold mb-4 border border-red-100">
+            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+            BLT Monitor Extension
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight text-gray-900">Reliable monitoring for every BLT surface</h1>
+          <p class="text-sm sm:text-base text-gray-600 mt-3 max-w-xl">Track uptime, keyword health, response trends, and monitor history from one dashboard. Designed for practical operations and fast triage.</p>
 
-  <!-- Monitor Cards -->
-  <div id="monitors-list" class="space-y-3">
-    <!-- Monitor cards will be inserted here -->
+          <div class="mt-5 flex flex-wrap gap-2.5">
+            <a href="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml" rel="noopener noreferrer" target="_blank"
+               class="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold">
+              <i class="fa-solid fa-play" aria-hidden="true"></i>
+              Run Workflow
+            </a>
+            <a href="https://github.com/OWASP-BLT/BLT-Monitor/edit/main/monitors.json" rel="noopener noreferrer" target="_blank"
+               class="btn-outline inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold">
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+              Edit Monitors
+            </a>
+          </div>
+
+          <div class="mt-5 flex items-center gap-2 flex-wrap">
+            <a href="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml" rel="noopener noreferrer" target="_blank"
+               class="inline-block rounded overflow-hidden border border-neutral-border">
+              <img alt="Website Monitor Status" src="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml/badge.svg">
+            </a>
+            <a href="https://github.com/OWASP-BLT/BLT-Monitor/stargazers" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 text-xs font-semibold">
+              <i class="fa-regular fa-star" aria-hidden="true"></i> Stars <span id="gh-stars" class="font-extrabold">...</span>
+            </a>
+            <a href="https://github.com/OWASP-BLT/BLT-Monitor/forks" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-semibold">
+              <i class="fa-solid fa-code-fork" aria-hidden="true"></i> Forks <span id="gh-forks" class="font-extrabold">...</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3">
+          <article class="surface-card rounded-xl p-4">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+              <i class="fa-solid fa-sitemap" aria-hidden="true"></i>
+            </div>
+            <h2 class="font-bold text-sm text-gray-900">Multi-monitor ready</h2>
+            <p class="text-xs text-gray-600 mt-1">Monitor many BLT endpoints from one unified list and drill into details quickly.</p>
+          </article>
+          <article class="surface-card rounded-xl p-4">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+              <i class="fa-solid fa-wave-square" aria-hidden="true"></i>
+            </div>
+            <h2 class="font-bold text-sm text-gray-900">Trend visibility</h2>
+            <p class="text-xs text-gray-600 mt-1">Instant sparklines and historical charts reveal latency spikes and anomalies.</p>
+          </article>
+          <article class="surface-card rounded-xl p-4">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </div>
+            <h2 class="font-bold text-sm text-gray-900">Keyword checks</h2>
+            <p class="text-xs text-gray-600 mt-1">Validate expected page content so silent rendering/content issues don’t go unnoticed.</p>
+          </article>
+          <article class="surface-card rounded-xl p-4">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+              <i class="fa-solid fa-bell" aria-hidden="true"></i>
+            </div>
+            <h2 class="font-bold text-sm text-gray-900">Slack alerting</h2>
+            <p class="text-xs text-gray-600 mt-1">Failure notifications keep maintainers informed during outages or content mismatches.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="surface-card rounded-2xl p-5 sm:p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-gears text-primary" aria-hidden="true"></i>
+        <h2 class="text-lg font-extrabold text-gray-900">How BLT Monitor is used</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <article class="rounded-xl border border-neutral-border p-4 bg-white">
+          <p class="text-xs text-red-700 font-bold">01</p>
+          <h3 class="text-sm font-bold mt-1">Define monitors</h3>
+          <p class="text-xs text-gray-600 mt-1">Set `id`, `url`, and `keyword` in `monitors.json` for each service or page.</p>
+        </article>
+        <article class="rounded-xl border border-neutral-border p-4 bg-white">
+          <p class="text-xs text-red-700 font-bold">02</p>
+          <h3 class="text-sm font-bold mt-1">Automatic checks</h3>
+          <p class="text-xs text-gray-600 mt-1">GitHub Actions runs every 5 minutes, writes status CSVs, and updates the dashboard.</p>
+        </article>
+        <article class="rounded-xl border border-neutral-border p-4 bg-white">
+          <p class="text-xs text-red-700 font-bold">03</p>
+          <h3 class="text-sm font-bold mt-1">Respond quickly</h3>
+          <p class="text-xs text-gray-600 mt-1">Use badges, trends, and alerts to catch issues early and recover faster.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="surface-card rounded-2xl p-5 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+        <div>
+          <h2 class="text-lg sm:text-xl font-extrabold flex items-center gap-2 text-gray-900">
+            <i class="fa-solid fa-globe text-primary" aria-hidden="true"></i>
+            Website Monitors
+          </h2>
+          <p class="text-sm text-gray-600 mt-1">Browse current monitor health and open each monitor for full details.</p>
+        </div>
+
+        <label for="monitor-search" class="relative block w-full sm:w-80">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          </span>
+          <input
+            id="monitor-search"
+            type="search"
+            placeholder="Search by name or URL"
+            class="input-base w-full pl-10 pr-4 py-2 text-sm"
+          />
+        </label>
+      </div>
+
+      <div id="monitors-list" class="space-y-3">
+        <!-- Monitor cards will be inserted here -->
+      </div>
+    </section>
+
   </div>
-</div>
+</main>
 
 <script>
-  // sanitizeId: stable ID for routing + CSV naming (must match monitor.html)
   function sanitizeId(id) {
     const cleaned = String(id || '').toLowerCase().replace(/[^a-z0-9-_]/g, '');
     return cleaned || 'monitor';
   }
 
-  // parseCSV now filters blank lines, validates column count & date
   function parseCSV(csv) {
     return csv
       .split('\n')
@@ -83,7 +262,6 @@
   }
 
   function escapeHTML(str) {
-    // null-safe escapeHTML
     return String(str ?? '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -106,6 +284,21 @@
     return `${Math.floor(hours / 24)}d ago`;
   }
 
+  const monitorCards = [];
+  const monitorSearch = document.getElementById('monitor-search');
+
+  function applyMonitorFilter() {
+    const query = (monitorSearch?.value || '').toLowerCase().trim();
+    monitorCards.forEach(card => {
+      const target = `${card.dataset.monitorName || ''} ${card.dataset.monitorUrl || ''}`.toLowerCase();
+      card.style.display = !query || target.includes(query) ? '' : 'none';
+    });
+  }
+
+  if (monitorSearch) {
+    monitorSearch.addEventListener('input', applyMonitorFilter);
+  }
+
   fetch('monitors.json')
     .then(r => {
       if (!r.ok) throw new Error('Failed to fetch monitors.json');
@@ -114,9 +307,10 @@
     .then(monitors => {
       const container = document.getElementById('monitors-list');
       monitors.forEach((monitor, index) => {
-        const safeId = sanitizeId(monitor.id);          // used for routing & CSV — must stay stable
-        const domSafeId = `${safeId}-${index}`;        // DOM-only: guarantees unique canvas/element IDs
+        const safeId = sanitizeId(monitor.id);
+        const domSafeId = `${safeId}-${index}`;
         const csvFile = monitors.length > 1 ? `status-${safeId}.csv` : 'status.csv';
+
         fetch(csvFile)
           .then(r => {
             if (!r.ok) throw new Error(`CSV fetch failed: ${r.status} ${r.statusText}`);
@@ -125,33 +319,46 @@
           .then(csv => {
             const rows = parseCSV(csv);
             const lastRow = rows.length > 0 ? rows[rows.length - 1] : null;
-            const card = createMonitorCard(monitor, safeId, domSafeId, rows, lastRow, csvFile);
+            const card = createMonitorCard(monitor, safeId, domSafeId, rows, lastRow);
+            card.dataset.monitorName = monitor.name || '';
+            card.dataset.monitorUrl = monitor.url || '';
             container.appendChild(card);
+            monitorCards.push(card);
+            applyMonitorFilter();
           })
           .catch(err => {
             console.error(`Failed to load data for ${monitor.id}:`, err);
-            const card = createMonitorCard(monitor, safeId, domSafeId, [], null, csvFile);
+            const card = createMonitorCard(monitor, safeId, domSafeId, [], null);
+            card.dataset.monitorName = monitor.name || '';
+            card.dataset.monitorUrl = monitor.url || '';
             container.appendChild(card);
+            monitorCards.push(card);
+            applyMonitorFilter();
           });
       });
     })
     .catch(err => {
       console.error('Failed to load monitors configuration:', err);
       document.getElementById('monitors-list').innerHTML =
-        '<div class="bg-red-900/30 text-red-300 border border-red-800 rounded-xl p-4 text-center">Failed to load monitors configuration</div>';
+        '<div class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4 text-center text-sm font-medium">Failed to load monitors configuration</div>';
     });
 
-  function createMonitorCard(monitor, safeId, domSafeId, rows, lastRow, csvFile) {
+  function createMonitorCard(monitor, safeId, domSafeId, rows, lastRow) {
     const card = document.createElement('div');
     card.onclick = () => { window.location.href = `monitor.html?id=${safeId}`; };
-    card.onkeydown = (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === card) { e.preventDefault(); window.location.href = `monitor.html?id=${safeId}`; } };
+    card.onkeydown = (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target === card) {
+        e.preventDefault();
+        window.location.href = `monitor.html?id=${safeId}`;
+      }
+    };
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'link');
     card.setAttribute('aria-label', `View details for ${monitor.name}`);
-    card.className = 'card-hover block bg-[#0f172a] border border-slate-800 rounded-xl hover:border-slate-600 hover:shadow-xl p-4 sm:p-5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-500';
+    card.className = 'card-hover block surface-card rounded-xl p-4 sm:p-5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600';
 
-    let statusBadgeClass = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700';
-    let statusIcon = '<i class="fa-solid fa-question"></i> Unknown';
+    let statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-gray-100 text-gray-600 border-gray-200';
+    let statusIcon = '<i class="fa-solid fa-circle-question" aria-hidden="true"></i> Unknown';
     let responseTime = '--';
     let lastCheck = 'Never';
 
@@ -161,20 +368,19 @@
       const status = (isSuccess && keywordFound) ? 'up' : (isSuccess ? 'warning' : 'down');
 
       if (status === 'up') {
-        statusBadgeClass = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-900/50 text-green-300 border border-green-800';
-        statusIcon = '<i class="fa-solid fa-circle-check"></i> Up';
+        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200';
+        statusIcon = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Up';
       } else if (status === 'warning') {
-        statusBadgeClass = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300 border border-yellow-800';
-        statusIcon = '<i class="fa-solid fa-triangle-exclamation"></i> Warning';
+        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-amber-50 text-amber-700 border-amber-200';
+        statusIcon = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Warning';
       } else if (status === 'down') {
-        statusBadgeClass = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-900/50 text-red-300 border border-red-800';
-        statusIcon = '<i class="fa-solid fa-circle-xmark"></i> Down';
+        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-red-50 text-red-700 border-red-200';
+        statusIcon = '<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Down';
       }
 
       const ms = parseInt(lastRow[1]);
       responseTime = isNaN(ms) ? '--' : ms.toLocaleString() + ' ms';
 
-      //guard against invalid date before calling timeAgo
       const checkDate = new Date(lastRow[0]);
       lastCheck = isNaN(checkDate.getTime()) ? 'Unknown' : timeAgo(checkDate);
     }
@@ -185,29 +391,29 @@
       <div class="flex items-start gap-4">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1">
-            <h2 class="text-base sm:text-lg font-bold text-[#e2e8f0] truncate">${escapeHTML(monitor.name)}</h2>
+            <h2 class="text-base sm:text-lg font-extrabold text-gray-900 truncate">${escapeHTML(monitor.name)}</h2>
             <span class="${statusBadgeClass}">${statusIcon}</span>
           </div>
-          <div class="flex items-center gap-1.5 text-sm text-slate-500 mt-1">
-            <i class="fa-solid fa-link flex-shrink-0 text-slate-600"></i>
+          <div class="flex items-center gap-1.5 text-sm text-gray-600 mt-1">
+            <i class="fa-solid fa-link flex-shrink-0 text-gray-400" aria-hidden="true"></i>
             <span class="truncate max-w-[300px]" title="${escapeHTML(monitor.url)}">${escapeHTML(monitor.url)}</span>
           </div>
           <div class="flex items-center gap-2 flex-wrap mt-2.5">
             <a href="${escapeHTML(safeUrl(monitor.url))}" target="_blank" rel="noopener noreferrer"
                onclick="event.stopPropagation()" onkeydown="event.stopPropagation()"
-               class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-white bg-red-600 hover:bg-red-700 text-xs font-medium transition-colors"
+               class="btn-primary flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-semibold"
                title="Open in new window">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open
             </a>
-            <span class="flex items-center gap-1 bg-teal-900/40 text-teal-300 px-2.5 py-0.5 rounded-full text-xs border border-teal-800/60">
-              <i class="fa-solid fa-clock"></i> ${responseTime}
+            <span class="flex items-center gap-1 bg-cyan-50 text-cyan-700 px-2.5 py-0.5 rounded-full text-xs border border-cyan-200 font-semibold">
+              <i class="fa-solid fa-clock" aria-hidden="true"></i> ${responseTime}
             </span>
-            <span class="flex items-center gap-1 bg-orange-900/40 text-orange-300 px-2.5 py-0.5 rounded-full text-xs border border-orange-800/60">
-              <i class="fa-solid fa-calendar"></i> ${lastCheck}
+            <span class="flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-xs border border-orange-200 font-semibold">
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${lastCheck}
             </span>
             ${monitor.keyword ? `
-            <span class="flex items-center gap-1 text-xs text-slate-500">
-              <i class="fa-solid fa-magnifying-glass"></i> keyword: <strong class="text-slate-300">${escapeHTML(monitor.keyword)}</strong>
+            <span class="flex items-center gap-1 text-xs text-gray-600">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> keyword: <strong class="text-gray-900">${escapeHTML(monitor.keyword)}</strong>
             </span>` : ''}
           </div>
         </div>
@@ -229,12 +435,11 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // filter out NaN response times before charting
     const recentRows = rows.slice(-20).filter(r => !isNaN(parseInt(r[1])));
     const data = recentRows.map(r => parseInt(r[1]));
-    const bgColors = recentRows.map(r =>
-      (r[2] === 'success' && r[3] === 'found') ? '#4CAF50' :
-      (r[2] === 'success' ? '#FFC107' : '#f44336')
+    const pointColors = recentRows.map(r =>
+      (r[2] === 'success' && r[3] === 'found') ? '#059669' :
+      (r[2] === 'success' ? '#d97706' : '#E10101')
     );
 
     if (data.length === 0) return;
@@ -246,14 +451,14 @@
         datasets: [{
           data,
           fill: true,
-          borderColor: '#2dd4bf',
-          backgroundColor: 'rgba(45, 212, 191, 0.12)',
-          pointBackgroundColor: bgColors,
-          pointBorderColor: 'rgba(0,0,0,0.4)',
+          borderColor: '#E10101',
+          backgroundColor: 'rgba(225, 1, 1, 0.08)',
+          pointBackgroundColor: pointColors,
+          pointBorderColor: '#ffffff',
           pointBorderWidth: 1,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          tension: 0.4,
+          pointRadius: 2.8,
+          pointHoverRadius: 4,
+          tension: 0.35,
           borderWidth: 2
         }]
       },
@@ -269,7 +474,6 @@
     });
   }
 
-  // GitHub stats
   fetch('https://api.github.com/repos/OWASP-BLT/BLT-Monitor')
     .then(r => {
       if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
@@ -283,7 +487,6 @@
       document.getElementById('gh-stars').textContent = '—';
       document.getElementById('gh-forks').textContent = '—';
     });
-
 </script>
 </body>
 </html>
