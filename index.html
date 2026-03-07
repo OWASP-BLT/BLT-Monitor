@@ -377,7 +377,7 @@
       monitors.forEach((monitor, index) => {
         const safeId = sanitizeId(monitor.id);
         const domSafeId = `${safeId}-${index}`;
-        const csvFile = monitors.length > 1 ? `data/status-${safeId}.csv` : 'data/status.csv';
+        const csvFile = monitors.length > 1 ? `status-${safeId}.csv` : 'status.csv';
 
         fetch(csvFile)
           .then(r => {
