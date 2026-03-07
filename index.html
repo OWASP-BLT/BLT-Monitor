@@ -58,6 +58,17 @@
     </div>
   </div>
 
+  <!-- Monitors Toolbar: count + sort -->
+  <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+    <span id="monitor-count" class="text-sm text-slate-400">Loading monitors…</span>
+    <button id="sort-delay-btn"
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+      title="Sort by delay (ascending)" aria-label="Sort monitors by response delay (ascending)">
+      <i class="fa-solid fa-arrow-up-wide-short"></i>
+      <span>Sort by Delay</span>
+    </button>
+  </div>
+
   <!-- Monitor Cards -->
   <div id="monitors-list" class="space-y-3">
     <!-- Monitor cards will be inserted here -->
@@ -106,6 +117,30 @@
     return `${Math.floor(hours / 24)}d ago`;
   }
 
+  // Tracks loaded monitor cards for sorting: { delay: number, card: HTMLElement }
+  const monitorEntries = [];
+  let sortAsc = true;
+
+  const sortBtn = document.getElementById('sort-delay-btn');
+  const sortBtnIcon = sortBtn.querySelector('i');
+  sortBtn.addEventListener('click', () => {
+    sortAsc = !sortAsc;
+    if (sortAsc) {
+      sortBtnIcon.className = 'fa-solid fa-arrow-up-wide-short';
+      sortBtn.title = 'Sort by delay (ascending)';
+      sortBtn.setAttribute('aria-label', 'Sort monitors by response delay (ascending)');
+    } else {
+      sortBtnIcon.className = 'fa-solid fa-arrow-down-wide-short';
+      sortBtn.title = 'Sort by delay (descending)';
+      sortBtn.setAttribute('aria-label', 'Sort monitors by response delay (descending)');
+    }
+    const sorted = [...monitorEntries].sort((a, b) =>
+      sortAsc ? a.delay - b.delay : b.delay - a.delay
+    );
+    const container = document.getElementById('monitors-list');
+    sorted.forEach(entry => container.appendChild(entry.card));
+  });
+
   fetch('monitors.json')
     .then(r => {
       if (!r.ok) throw new Error('Failed to fetch monitors.json');
@@ -113,6 +148,9 @@
     })
     .then(monitors => {
       const container = document.getElementById('monitors-list');
+      const countEl = document.getElementById('monitor-count');
+      countEl.textContent = `${monitors.length} Monitor${monitors.length !== 1 ? 's' : ''}`;
+
       monitors.forEach((monitor, index) => {
         const safeId = sanitizeId(monitor.id);          // used for routing & CSV — must stay stable
         const domSafeId = `${safeId}-${index}`;        // DOM-only: guarantees unique canvas/element IDs
@@ -126,11 +164,14 @@
             const rows = parseCSV(csv);
             const lastRow = rows.length > 0 ? rows[rows.length - 1] : null;
             const card = createMonitorCard(monitor, safeId, domSafeId, rows, lastRow, csvFile);
+            const delay = lastRow ? (parseInt(lastRow[1]) || Infinity) : Infinity; // col[1] = response time (ms)
+            monitorEntries.push({ delay, card });
             container.appendChild(card);
           })
           .catch(err => {
             console.error(`Failed to load data for ${monitor.id}:`, err);
             const card = createMonitorCard(monitor, safeId, domSafeId, [], null, csvFile);
+            monitorEntries.push({ delay: Infinity, card });
             container.appendChild(card);
           });
       });
@@ -139,6 +180,7 @@
       console.error('Failed to load monitors configuration:', err);
       document.getElementById('monitors-list').innerHTML =
         '<div class="bg-red-900/30 text-red-300 border border-red-800 rounded-xl p-4 text-center">Failed to load monitors configuration</div>';
+      document.getElementById('monitor-count').textContent = '0 Monitors';
     });
 
   function createMonitorCard(monitor, safeId, domSafeId, rows, lastRow, csvFile) {
