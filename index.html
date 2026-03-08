@@ -355,6 +355,8 @@
   }
 
   const monitorCards = [];
+  const sparklineDataCache = new Map();
+  const sparklineCharts = new Map();
   const monitorSearch = document.getElementById('monitor-search');
 
   function applyMonitorFilter() {
@@ -505,6 +507,7 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const isDark = document.documentElement.classList.contains('dark');
+    sparklineDataCache.set(canvasId, rows);
 
     const recentRows = rows.slice(-20).filter(r => !isNaN(parseInt(r[1])));
     const data = recentRows.map(r => parseInt(r[1]));
@@ -515,7 +518,12 @@
 
     if (data.length === 0) return;
 
-    new Chart(ctx, {
+    const existingChart = sparklineCharts.get(canvasId);
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
+    const chart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: data.map((_, i) => i),
@@ -543,6 +551,13 @@
         }
       }
     });
+    sparklineCharts.set(canvasId, chart);
+  }
+
+  function rerenderSparklines() {
+    sparklineDataCache.forEach((rows, canvasId) => {
+      drawSparkline(canvasId, rows);
+    });
   }
 
   fetch('https://api.github.com/repos/OWASP-BLT/BLT-Monitor')
@@ -567,6 +582,7 @@
       try {
         localStorage.setItem('blt-theme', isDark ? 'dark' : 'light');
       } catch (e) {}
+      rerenderSparklines();
     });
   }
 </script>
