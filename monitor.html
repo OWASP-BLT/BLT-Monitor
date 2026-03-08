@@ -359,6 +359,7 @@
   }
 
   let chartInstance = null;
+  let lastChartPayload = null;
   const slackConfigured = true;
 
   function isDarkMode() {
@@ -377,6 +378,61 @@
       pointBorder: dark ? '#1f2937' : '#ffffff',
       lineFill: dark ? 'rgba(239, 68, 68, 0.14)' : 'rgba(225, 1, 1, 0.08)'
     };
+  }
+
+  function renderResponseChart(labels, data, bgColors) {
+    const canvas = document.getElementById('statusChart');
+    if (!canvas) return;
+
+    const theme = chartThemeOptions();
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Response Time (ms)',
+          data,
+          fill: true,
+          borderColor: '#E10101',
+          backgroundColor: theme.lineFill,
+          pointBackgroundColor: bgColors,
+          pointBorderColor: theme.pointBorder,
+          pointBorderWidth: 1,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0.35,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipTitle,
+            bodyColor: theme.tooltipBody,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'ms', color: theme.axisText },
+            ticks: { color: theme.axisText },
+            grid: { color: theme.grid }
+          },
+          x: {
+            title: { display: true, text: 'Check #', color: theme.axisText },
+            ticks: { color: theme.axisText },
+            grid: { color: theme.grid }
+          }
+        }
+      }
+    });
   }
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -418,7 +474,7 @@
     .catch(err => {
       console.error('Failed to load monitor:', err);
       document.getElementById('main-content').innerHTML =
-        '<div class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4 m-4 text-center text-sm font-medium">Failed to load monitor configuration</div>';
+        '<div class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4 m-4 text-center text-sm font-medium dark:border-red-900 dark:bg-red-950/30 dark:text-red-300">Failed to load monitor configuration</div>';
     });
 
   function loadMonitorData(monitor, csvFile) {
@@ -474,57 +530,8 @@
             (r[2] === 'success' && r[3] === 'found') ? '#059669' :
             (r[2] === 'success' ? '#d97706' : '#E10101')
           );
-
-          const theme = chartThemeOptions();
-          if (chartInstance) chartInstance.destroy();
-          chartInstance = new Chart(
-            document.getElementById('statusChart').getContext('2d'), {
-              type: 'line',
-              data: {
-                labels,
-                datasets: [{
-                  label: 'Response Time (ms)',
-                  data,
-                  fill: true,
-                  borderColor: '#E10101',
-                  backgroundColor: theme.lineFill,
-                  pointBackgroundColor: bgColors,
-                  pointBorderColor: theme.pointBorder,
-                  pointBorderWidth: 1,
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
-                  tension: 0.35,
-                  borderWidth: 2
-                }]
-              },
-              options: {
-                responsive: true,
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    backgroundColor: theme.tooltipBg,
-                    titleColor: theme.tooltipTitle,
-                    bodyColor: theme.tooltipBody,
-                    borderColor: theme.tooltipBorder,
-                    borderWidth: 1
-                  }
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    title: { display: true, text: 'ms', color: theme.axisText },
-                    ticks: { color: theme.axisText },
-                    grid: { color: theme.grid }
-                  },
-                  x: {
-                    title: { display: true, text: 'Check #', color: theme.axisText },
-                    ticks: { color: theme.axisText },
-                    grid: { color: theme.grid }
-                  }
-                }
-              }
-            }
-          );
+          lastChartPayload = { labels, data, bgColors };
+          renderResponseChart(labels, data, bgColors);
         }
 
         const tbody = document.querySelector('#recent-table tbody');
@@ -587,11 +594,8 @@
         localStorage.setItem('blt-theme', isDark ? 'dark' : 'light');
       } catch (e) {}
 
-      if (urlParams.get('id')) {
-        const current = new URL(window.location.href);
-        window.location.replace(current.toString());
-      } else if (chartInstance) {
-        chartInstance.update();
+      if (lastChartPayload) {
+        renderResponseChart(lastChartPayload.labels, lastChartPayload.data, lastChartPayload.bgColors);
       }
     });
   }

@@ -504,6 +504,7 @@
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    const isDark = document.documentElement.classList.contains('dark');
 
     const recentRows = rows.slice(-20).filter(r => !isNaN(parseInt(r[1])));
     const data = recentRows.map(r => parseInt(r[1]));
@@ -522,9 +523,9 @@
           data,
           fill: true,
           borderColor: '#E10101',
-          backgroundColor: 'rgba(225, 1, 1, 0.08)',
+          backgroundColor: isDark ? 'rgba(239, 68, 68, 0.14)' : 'rgba(225, 1, 1, 0.08)',
           pointBackgroundColor: pointColors,
-          pointBorderColor: '#ffffff',
+          pointBorderColor: isDark ? '#1f2937' : '#ffffff',
           pointBorderWidth: 1,
           pointRadius: 2.8,
           pointHoverRadius: 4,
