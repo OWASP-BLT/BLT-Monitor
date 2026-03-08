@@ -1,24 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLT Monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('blt-theme');
+          if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
               primary: '#E10101',
+              'primary-hover': '#B91C1C',
               'neutral-border': '#E5E5E5',
               'dark-base': '#111827',
-              'dark-surface': '#1F2937'
+              'dark-surface': '#1F2937',
+              'active-bg': '#feeae9'
             },
             fontFamily: {
               sans: ['Manrope', 'Segoe UI', 'system-ui', 'sans-serif']
+            },
+            boxShadow: {
+              soft: '0 14px 40px -28px rgba(17, 24, 39, 0.35)'
             }
           }
         }
@@ -31,10 +47,21 @@
       :root {
         --blt-primary: #E10101;
         --blt-border: #E5E5E5;
+        --blt-surface: #ffffff;
+        --blt-background: #f8fafc;
+      }
+
+      .dark {
+        --blt-primary: #EF4444;
+        --blt-border: #374151;
+        --blt-surface: #1F2937;
+        --blt-background: #111827;
       }
 
       body {
         font-family: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+        background: var(--blt-background);
+        transition: background-color 0.3s ease;
       }
 
       .hero-bg {
@@ -42,10 +69,18 @@
           radial-gradient(circle at 10% 10%, rgba(225, 1, 1, 0.08), transparent 34%),
           radial-gradient(circle at 90% 0%, rgba(225, 1, 1, 0.06), transparent 36%),
           linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+        transition: background 0.3s ease;
+      }
+
+      .dark .hero-bg {
+        background:
+          radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.12), transparent 34%),
+          radial-gradient(circle at 90% 0%, rgba(239, 68, 68, 0.08), transparent 36%),
+          linear-gradient(180deg, #1F2937 0%, #111827 100%);
       }
 
       .surface-card {
-        background: #ffffff;
+        background: var(--blt-surface);
         border: 1px solid var(--blt-border);
       }
 
@@ -57,6 +92,11 @@
         transform: translateY(-2px);
         border-color: #fecaca;
         box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+      }
+
+      .dark .card-hover:hover {
+        border-color: #7f1d1d;
+        box-shadow: 0 10px 20px rgba(2, 6, 23, 0.45);
       }
 
       .btn-primary {
@@ -83,6 +123,17 @@
         color: #fff;
       }
 
+      .dark .btn-outline {
+        background: transparent;
+        color: #f87171;
+        border-color: #ef4444;
+      }
+
+      .dark .btn-outline:hover {
+        background: #dc2626;
+        color: #fff;
+      }
+
       .input-base {
         border: 1px solid #9ca3af;
         border-radius: 0.375rem;
@@ -95,17 +146,36 @@
         border-color: #dc2626;
         box-shadow: 0 0 0 1px #dc2626;
       }
+
+      .dark .input-base {
+        background: #111827;
+        color: #e5e7eb;
+        border-color: #4b5563;
+      }
+
+      .dark .input-base::placeholder {
+        color: #9ca3af;
+      }
     </style>
 </head>
-<body class="bg-[#fafafa] text-gray-900 m-0 p-0">
+<body class="font-sans text-gray-900 antialiased dark:bg-dark-base dark:text-gray-100 m-0 p-0">
 
-<nav class="bg-white border-b border-neutral-border px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-sm">
+<nav class="bg-white/95 border-b border-neutral-border px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-sm dark:bg-dark-surface/95 dark:border-gray-700">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <div class="flex items-center gap-2 font-extrabold text-lg">
       <img src="https://api.owaspblt.org/logo.png" class="w-[30px]" alt="BLT"/>
-      <span class="text-gray-900">BLT <span class="text-primary">Monitor</span></span>
+      <span class="text-gray-900 dark:text-gray-100">BLT <span class="text-primary dark:text-red-400">Monitor</span></span>
     </div>
     <div class="flex items-center gap-2">
+      <button
+        id="dark-toggle"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-border text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+        aria-label="Toggle dark mode"
+        type="button"
+      >
+        <i class="fa-solid fa-moon dark:hidden" aria-hidden="true"></i>
+        <i class="fa-solid fa-sun hidden dark:inline-block" aria-hidden="true"></i>
+      </button>
       <a href="https://github.com/OWASP-BLT/BLT-Monitor" target="_blank" rel="noopener noreferrer"
          class="btn-primary inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg font-semibold">
         <i class="fa-brands fa-github" aria-hidden="true"></i>
@@ -121,12 +191,12 @@
     <section class="surface-card rounded-2xl p-6 sm:p-8">
       <div class="grid lg:grid-cols-2 gap-6 items-start">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold mb-4 border border-red-100">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold mb-4 border border-red-100 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900">
             <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
             BLT Monitor Extension
           </div>
-          <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight text-gray-900">Reliable monitoring for every BLT surface</h1>
-          <p class="text-sm sm:text-base text-gray-600 mt-3 max-w-xl">Track uptime, keyword health, response trends, and monitor history from one dashboard. Designed for practical operations and fast triage.</p>
+          <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight text-gray-900 dark:text-gray-100">Reliable monitoring for every BLT surface</h1>
+          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-3 max-w-xl">Track uptime, keyword health, response trends, and monitor history from one dashboard. Designed for practical operations and fast triage.</p>
 
           <div class="mt-5 flex flex-wrap gap-2.5">
             <a href="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml" rel="noopener noreferrer" target="_blank"
@@ -143,15 +213,15 @@
 
           <div class="mt-5 flex items-center gap-2 flex-wrap">
             <a href="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml" rel="noopener noreferrer" target="_blank"
-               class="inline-block rounded overflow-hidden border border-neutral-border">
+               class="inline-block rounded overflow-hidden">
               <img alt="Website Monitor Status" src="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml/badge.svg">
             </a>
             <a href="https://github.com/OWASP-BLT/BLT-Monitor/stargazers" target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 text-xs font-semibold">
+               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 text-xs font-semibold dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300">
               <i class="fa-regular fa-star" aria-hidden="true"></i> Stars <span id="gh-stars" class="font-extrabold">...</span>
             </a>
             <a href="https://github.com/OWASP-BLT/BLT-Monitor/forks" target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-semibold">
+               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-semibold dark:border-blue-900 dark:bg-blue-950/30 dark:text-blue-300">
               <i class="fa-solid fa-code-fork" aria-hidden="true"></i> Forks <span id="gh-forks" class="font-extrabold">...</span>
             </a>
           </div>
@@ -159,32 +229,32 @@
 
         <div class="grid sm:grid-cols-2 gap-3">
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2 dark:bg-red-950/30 dark:text-red-400">
               <i class="fa-solid fa-sitemap" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Multi-monitor ready</h2>
-            <p class="text-xs text-gray-600 mt-1">Monitor many BLT endpoints from one unified list and drill into details quickly.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Multi-monitor ready</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Monitor many BLT endpoints from one unified list and drill into details quickly.</p>
           </article>
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2 dark:bg-red-950/30 dark:text-red-400">
               <i class="fa-solid fa-wave-square" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Trend visibility</h2>
-            <p class="text-xs text-gray-600 mt-1">Instant sparklines and historical charts reveal latency spikes and anomalies.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Trend visibility</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Instant sparklines and historical charts reveal latency spikes and anomalies.</p>
           </article>
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2 dark:bg-red-950/30 dark:text-red-400">
               <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Keyword checks</h2>
-            <p class="text-xs text-gray-600 mt-1">Validate expected page content so silent rendering/content issues don’t go unnoticed.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Keyword checks</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Validate expected page content so silent rendering/content issues don’t go unnoticed.</p>
           </article>
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2 dark:bg-red-950/30 dark:text-red-400">
               <i class="fa-solid fa-bell" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Slack alerting</h2>
-            <p class="text-xs text-gray-600 mt-1">Failure notifications keep maintainers informed during outages or content mismatches.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Slack alerting</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Failure notifications keep maintainers informed during outages or content mismatches.</p>
           </article>
         </div>
       </div>
@@ -193,23 +263,23 @@
     <section class="surface-card rounded-2xl p-5 sm:p-6">
       <div class="flex items-center gap-2 mb-4">
         <i class="fa-solid fa-gears text-primary" aria-hidden="true"></i>
-        <h2 class="text-lg font-extrabold text-gray-900">How BLT Monitor is used</h2>
+        <h2 class="text-lg font-extrabold text-gray-900 dark:text-gray-100">How BLT Monitor is used</h2>
       </div>
       <div class="grid md:grid-cols-3 gap-4">
-        <article class="rounded-xl border border-neutral-border p-4 bg-white">
+        <article class="rounded-xl border border-neutral-border p-4 bg-white dark:border-gray-700 dark:bg-dark-base">
           <p class="text-xs text-red-700 font-bold">01</p>
-          <h3 class="text-sm font-bold mt-1">Define monitors</h3>
-          <p class="text-xs text-gray-600 mt-1">Set `id`, `url`, and `keyword` in `monitors.json` for each service or page.</p>
+          <h3 class="text-sm font-bold mt-1 dark:text-gray-100">Define monitors</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Set `id`, `url`, and `keyword` in `monitors.json` for each service or page.</p>
         </article>
-        <article class="rounded-xl border border-neutral-border p-4 bg-white">
+        <article class="rounded-xl border border-neutral-border p-4 bg-white dark:border-gray-700 dark:bg-dark-base">
           <p class="text-xs text-red-700 font-bold">02</p>
-          <h3 class="text-sm font-bold mt-1">Automatic checks</h3>
-          <p class="text-xs text-gray-600 mt-1">GitHub Actions runs every 5 minutes, writes status CSVs, and updates the dashboard.</p>
+          <h3 class="text-sm font-bold mt-1 dark:text-gray-100">Automatic checks</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">GitHub Actions runs every 5 minutes, writes status CSVs, and updates the dashboard.</p>
         </article>
-        <article class="rounded-xl border border-neutral-border p-4 bg-white">
+        <article class="rounded-xl border border-neutral-border p-4 bg-white dark:border-gray-700 dark:bg-dark-base">
           <p class="text-xs text-red-700 font-bold">03</p>
-          <h3 class="text-sm font-bold mt-1">Respond quickly</h3>
-          <p class="text-xs text-gray-600 mt-1">Use badges, trends, and alerts to catch issues early and recover faster.</p>
+          <h3 class="text-sm font-bold mt-1 dark:text-gray-100">Respond quickly</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">Use badges, trends, and alerts to catch issues early and recover faster.</p>
         </article>
       </div>
     </section>
@@ -217,15 +287,15 @@
     <section class="surface-card rounded-2xl p-5 sm:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
         <div>
-          <h2 class="text-lg sm:text-xl font-extrabold flex items-center gap-2 text-gray-900">
+          <h2 class="text-lg sm:text-xl font-extrabold flex items-center gap-2 text-gray-900 dark:text-gray-100">
             <i class="fa-solid fa-globe text-primary" aria-hidden="true"></i>
             Website Monitors
           </h2>
-          <p class="text-sm text-gray-600 mt-1">Browse current monitor health and open each monitor for full details.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Browse current monitor health and open each monitor for full details.</p>
         </div>
 
         <label for="monitor-search" class="relative block w-full sm:w-80">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
           </span>
           <input
@@ -340,7 +410,7 @@
     .catch(err => {
       console.error('Failed to load monitors configuration:', err);
       document.getElementById('monitors-list').innerHTML =
-        '<div class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4 text-center text-sm font-medium">Failed to load monitors configuration</div>';
+        '<div class="rounded-xl border border-red-200 bg-red-50 text-red-700 p-4 text-center text-sm font-medium dark:border-red-900 dark:bg-red-950/30 dark:text-red-300">Failed to load monitors configuration</div>';
     });
 
   function createMonitorCard(monitor, safeId, domSafeId, rows, lastRow) {
@@ -355,9 +425,9 @@
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'link');
     card.setAttribute('aria-label', `View details for ${monitor.name}`);
-    card.className = 'card-hover block surface-card rounded-xl p-4 sm:p-5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600';
+    card.className = 'card-hover block surface-card rounded-xl p-4 sm:p-5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 dark:focus:ring-red-400';
 
-    let statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-gray-100 text-gray-600 border-gray-200';
+    let statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600';
     let statusIcon = '<i class="fa-solid fa-circle-question" aria-hidden="true"></i> Unknown';
     let responseTime = '--';
     let lastCheck = 'Never';
@@ -368,13 +438,13 @@
       const status = (isSuccess && keywordFound) ? 'up' : (isSuccess ? 'warning' : 'down');
 
       if (status === 'up') {
-        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200';
+        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-900';
         statusIcon = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Up';
       } else if (status === 'warning') {
-        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-amber-50 text-amber-700 border-amber-200';
+        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900';
         statusIcon = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Warning';
       } else if (status === 'down') {
-        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-red-50 text-red-700 border-red-200';
+        statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900';
         statusIcon = '<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Down';
       }
 
@@ -391,11 +461,11 @@
       <div class="flex items-start gap-4">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1">
-            <h2 class="text-base sm:text-lg font-extrabold text-gray-900 truncate">${escapeHTML(monitor.name)}</h2>
+            <h2 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-gray-100 truncate">${escapeHTML(monitor.name)}</h2>
             <span class="${statusBadgeClass}">${statusIcon}</span>
           </div>
-          <div class="flex items-center gap-1.5 text-sm text-gray-600 mt-1">
-            <i class="fa-solid fa-link flex-shrink-0 text-gray-400" aria-hidden="true"></i>
+          <div class="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300 mt-1">
+            <i class="fa-solid fa-link flex-shrink-0 text-gray-400 dark:text-gray-500" aria-hidden="true"></i>
             <span class="truncate max-w-[300px]" title="${escapeHTML(monitor.url)}">${escapeHTML(monitor.url)}</span>
           </div>
           <div class="flex items-center gap-2 flex-wrap mt-2.5">
@@ -405,15 +475,15 @@
                title="Open in new window">
               <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open
             </a>
-            <span class="flex items-center gap-1 bg-cyan-50 text-cyan-700 px-2.5 py-0.5 rounded-full text-xs border border-cyan-200 font-semibold">
+            <span class="flex items-center gap-1 bg-cyan-50 text-cyan-700 px-2.5 py-0.5 rounded-full text-xs border border-cyan-200 font-semibold dark:bg-cyan-950/30 dark:text-cyan-300 dark:border-cyan-900">
               <i class="fa-solid fa-clock" aria-hidden="true"></i> ${responseTime}
             </span>
-            <span class="flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-xs border border-orange-200 font-semibold">
+            <span class="flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-xs border border-orange-200 font-semibold dark:bg-orange-950/30 dark:text-orange-300 dark:border-orange-900">
               <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${lastCheck}
             </span>
             ${monitor.keyword ? `
-            <span class="flex items-center gap-1 text-xs text-gray-600">
-              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> keyword: <strong class="text-gray-900">${escapeHTML(monitor.keyword)}</strong>
+            <span class="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
+              <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> keyword: <strong class="text-gray-900 dark:text-gray-100">${escapeHTML(monitor.keyword)}</strong>
             </span>` : ''}
           </div>
         </div>
@@ -487,6 +557,17 @@
       document.getElementById('gh-stars').textContent = '—';
       document.getElementById('gh-forks').textContent = '—';
     });
+
+  const darkToggle = document.getElementById('dark-toggle');
+  if (darkToggle) {
+    darkToggle.addEventListener('click', () => {
+      const root = document.documentElement;
+      const isDark = root.classList.toggle('dark');
+      try {
+        localStorage.setItem('blt-theme', isDark ? 'dark' : 'light');
+      } catch (e) {}
+    });
+  }
 </script>
 </body>
 </html>
