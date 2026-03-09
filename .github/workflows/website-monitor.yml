@@ -50,14 +50,18 @@ jobs:
             local fetched_content=""
             local fetched_code=""
             local response_body_file=""
+            local curl_exit=0
 
             response_body_file=$(mktemp)
-            if fetched_code=$(curl -sS --fail --max-time 15 --retry 2 -o "$response_body_file" -w "%{http_code}" "$target_url"); then
+            fetched_code=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors -o "$response_body_file" -w "%{http_code}" "$target_url") || curl_exit=$?
+            if [ "$curl_exit" -eq 0 ]; then
               fetched_content=$(cat "$response_body_file")
             else
-              echo "Warning: failed to fetch content from $target_url"
+              echo "Warning: failed to fetch content from $target_url (curl exit code: $curl_exit, HTTP status: ${fetched_code:-unknown})"
               fetched_content=""
-              fetched_code="000"
+              if [ -z "$fetched_code" ]; then
+                fetched_code="000"
+              fi
             fi
             rm -f "$response_body_file"
 
