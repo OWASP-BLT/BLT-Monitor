@@ -52,5 +52,89 @@
     "name": "BLT Hackathons",
     "url": "https://hackathons.owaspblt.org",
     "keyword": "BLT"
+  },
+  {
+    "id": "pool_owaspblt",
+    "name": "BLT Pool",
+    "url": "https://pool.owaspblt.org",
+    "keyword": "reviews"
+  },
+  {
+    "id": "design_contest_owaspblt",
+    "name": "BLT Design Contest",
+    "url": "https://contest.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "rewards_owaspblt",
+    "name": "BLT Rewards",
+    "url": "https://rewards.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "dash_owaspblt",
+    "name": "BLT Dash",
+    "url": "https://dash.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "gsoc_owaspblt",
+    "name": "BLT GSoC",
+    "url": "https://gsoc.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "zero_owaspblt",
+    "name": "BLT Zero",
+    "url": "https://zero.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "byte_owaspblt",
+    "name": "BLT Byte",
+    "url": "https://byte.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "university_owaspblt",
+    "name": "BLT University",
+    "url": "https://university.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "netguardian_owaspblt",
+    "name": "BLT NetGuardian",
+    "url": "https://netguardian.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "safecloak_owaspblt",
+    "name": "BLT SafeCloak",
+    "url": "https://safecloak.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "timer_owaspblt",
+    "name": "BLT Timer",
+    "url": "https://timer.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "sizzle_owaspblt",
+    "name": "BLT Sizzle",
+    "url": "https://sizzle.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "extension_owaspblt",
+    "name": "BLT Extension",
+    "url": "https://extension.owaspblt.org",
+    "keyword": "BLT"
+  },
+  {
+    "id": "wich_owaspblt",
+    "name": "BLT OWASP Wich",
+    "url": "https://wich.owaspblt.org",
+    "keyword": "BLT"
   }
 ]
