@@ -355,7 +355,7 @@
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'link');
     card.setAttribute('aria-label', `View details for ${monitor.name}`);
-    card.className = 'card-hover block surface-card rounded-xl p-4 sm:p-5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600';
+    card.className = 'card-hover block surface-card rounded-xl p-3 sm:p-4 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600';
 
     let statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-gray-100 text-gray-600 border-gray-200';
     let statusIcon = '<i class="fa-solid fa-circle-question" aria-hidden="true"></i> Unknown';
@@ -388,27 +388,27 @@
     const canvasId = `chart-${domSafeId}`;
 
     card.innerHTML = `
-      <div class="flex items-start gap-4">
+      <div class="flex items-start gap-2 sm:gap-4">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1">
-            <h2 class="text-base sm:text-lg font-extrabold text-gray-900 truncate">${escapeHTML(monitor.name)}</h2>
-            <span class="${statusBadgeClass}">${statusIcon}</span>
+            <h2 class="text-sm sm:text-base font-extrabold text-gray-900 truncate">${escapeHTML(monitor.name)}</h2>
+            <span class="${statusBadgeClass} flex-shrink-0">${statusIcon}</span>
           </div>
-          <div class="flex items-center gap-1.5 text-sm text-gray-600 mt-1">
+          <div class="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mt-0.5">
             <i class="fa-solid fa-link flex-shrink-0 text-gray-400" aria-hidden="true"></i>
-            <span class="truncate max-w-[300px]" title="${escapeHTML(monitor.url)}">${escapeHTML(monitor.url)}</span>
+            <span class="truncate" title="${escapeHTML(monitor.url)}">${escapeHTML(monitor.url)}</span>
           </div>
-          <div class="flex items-center gap-2 flex-wrap mt-2.5">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap mt-1.5 sm:mt-2.5">
             <a href="${escapeHTML(safeUrl(monitor.url))}" target="_blank" rel="noopener noreferrer"
                onclick="event.stopPropagation()" onkeydown="event.stopPropagation()"
-               class="btn-primary flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-semibold"
+               class="btn-primary flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold"
                title="Open in new window">
               <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open
             </a>
-            <span class="flex items-center gap-1 bg-cyan-50 text-cyan-700 px-2.5 py-0.5 rounded-full text-xs border border-cyan-200 font-semibold">
+            <span class="flex items-center gap-1 bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded-full text-xs border border-cyan-200 font-semibold">
               <i class="fa-solid fa-clock" aria-hidden="true"></i> ${responseTime}
             </span>
-            <span class="flex items-center gap-1 bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full text-xs border border-orange-200 font-semibold">
+            <span class="flex items-center gap-1 bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full text-xs border border-orange-200 font-semibold">
               <i class="fa-solid fa-calendar" aria-hidden="true"></i> ${lastCheck}
             </span>
             ${monitor.keyword ? `
@@ -417,7 +417,7 @@
             </span>` : ''}
           </div>
         </div>
-        <div class="w-40 sm:w-48 h-16 sm:h-20 flex-shrink-0">
+        <div class="w-28 sm:w-40 h-14 sm:h-16 flex-shrink-0">
           <canvas id="${canvasId}"></canvas>
         </div>
       </div>
