@@ -94,7 +94,8 @@ jobs:
             echo "Result: $status (keyword: $keyword_status, duration: ${duration_s}s)"
 
             # Update status file for this monitor
-            status_file="status-${id}.csv"
+            mkdir -p data
+            status_file="data/status-${id}.csv"
             now_iso=$(date -Iseconds)
 
             if [ ! -s "$status_file" ]; then
@@ -146,16 +147,16 @@ jobs:
             fi
 
             now_iso=$(date -Iseconds)
-            if [ ! -s status.csv ]; then
-              echo "datetime,duration_ms,status,keyword_status" > status.csv
+            if [ ! -s data/status.csv ]; then
+              echo "datetime,duration_ms,status,keyword_status" > data/status.csv
             fi
-            echo "$now_iso,$duration_ms,$status,$keyword_status" >> status.csv
+            echo "$now_iso,$duration_ms,$status,$keyword_status" >> data/status.csv
 
             # Keep only last 30 data rows (plus header) - properly handle header
-            if [ "$(wc -l < status.csv)" -gt 31 ]; then
-              head -n 1 status.csv > status.csv.tmp
-              tail -n +2 status.csv | tail -n 30 >> status.csv.tmp
-              mv status.csv.tmp status.csv
+            if [ "$(wc -l < data/status.csv)" -gt 31 ]; then
+              head -n 1 data/status.csv > data/status.csv.tmp
+              tail -n +2 data/status.csv | tail -n 30 >> data/status.csv.tmp
+              mv data/status.csv.tmp data/status.csv
             fi
           fi
 
@@ -167,7 +168,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add status*.csv
+          git add data/status*.csv
           git commit -m "Update website monitor status" || true
           git pull --rebase origin main || true
           git push origin main
