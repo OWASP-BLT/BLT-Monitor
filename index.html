@@ -9,10 +9,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
               primary: '#E10101',
+              'primary-hover': '#B91C1C',
+              'active-bg': '#feeae9',
               'neutral-border': '#E5E5E5',
               'dark-base': '#111827',
               'dark-surface': '#1F2937'
@@ -31,22 +34,44 @@
       :root {
         --blt-primary: #E10101;
         --blt-border: #E5E5E5;
+        --blt-surface: #ffffff;
+        --blt-background: #f8fafc;
+      }
+
+      .dark {
+        --blt-primary: #EF4444;
+        --blt-border: #374151;
+        --blt-surface: #1F2937;
+        --blt-background: #111827;
       }
 
       body {
         font-family: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+        background: var(--blt-background);
+      }
+
+      .dark body {
+        color: #f3f4f6;
       }
 
       .hero-bg {
         background:
-          radial-gradient(circle at 10% 10%, rgba(225, 1, 1, 0.08), transparent 34%),
-          radial-gradient(circle at 90% 0%, rgba(225, 1, 1, 0.06), transparent 36%),
-          linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+          radial-gradient(circle at 18% 8%, rgba(225, 1, 1, 0.14), transparent 34%),
+          radial-gradient(circle at 85% 5%, rgba(225, 1, 1, 0.1), transparent 36%),
+          linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      }
+
+      .dark .hero-bg {
+        background:
+          radial-gradient(circle at 18% 8%, rgba(239, 68, 68, 0.12), transparent 34%),
+          radial-gradient(circle at 85% 5%, rgba(239, 68, 68, 0.08), transparent 36%),
+          linear-gradient(180deg, #111827 0%, #111827 100%);
       }
 
       .surface-card {
-        background: #ffffff;
+        background: var(--blt-surface);
         border: 1px solid var(--blt-border);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
       }
 
       .card-hover {
@@ -55,7 +80,7 @@
 
       .card-hover:hover {
         transform: translateY(-2px);
-        border-color: #fecaca;
+        border-color: #feeae9;
         box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
       }
 
@@ -67,14 +92,14 @@
       }
 
       .btn-primary:hover {
-        background: #b91c1c;
-        border-color: #b91c1c;
+        background: #B91C1C;
+        border-color: #B91C1C;
       }
 
       .btn-outline {
         color: var(--blt-primary);
         border: 1px solid var(--blt-primary);
-        background: #fff;
+        background: var(--blt-surface);
         transition: background-color 0.2s ease, color 0.2s ease;
       }
 
@@ -89,21 +114,23 @@
         padding: 0.5rem 1rem;
         outline: none;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        background: var(--blt-surface);
+        color: inherit;
       }
 
       .input-base:focus {
-        border-color: #dc2626;
-        box-shadow: 0 0 0 1px #dc2626;
+        border-color: var(--blt-primary);
+        box-shadow: 0 0 0 1px var(--blt-primary);
       }
     </style>
 </head>
-<body class="bg-[#fafafa] text-gray-900 m-0 p-0">
+<body class="bg-[--blt-background] text-gray-900 dark:text-gray-100 m-0 p-0">
 
-<nav class="bg-white border-b border-neutral-border px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-sm">
+<nav class="bg-white dark:bg-dark-surface border-b border-neutral-border dark:border-dark-base px-4 sm:px-6 py-3 sticky top-0 z-50 backdrop-blur-sm">
   <div class="max-w-7xl mx-auto flex items-center justify-between">
     <div class="flex items-center gap-2 font-extrabold text-lg">
       <img src="https://api.owaspblt.org/logo.png" class="w-[30px]" alt="BLT"/>
-      <span class="text-gray-900">BLT <span class="text-primary">Monitor</span></span>
+      <span class="text-gray-900 dark:text-gray-100">BLT <span class="text-primary">Monitor</span></span>
     </div>
     <div class="flex items-center gap-2">
       <a href="https://github.com/OWASP-BLT/BLT-Monitor" target="_blank" rel="noopener noreferrer"
@@ -121,12 +148,12 @@
     <section class="surface-card rounded-2xl p-6 sm:p-8">
       <div class="grid lg:grid-cols-2 gap-6 items-start">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold mb-4 border border-red-100">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-active-bg dark:bg-red-900/30 text-primary text-xs font-semibold mb-4 border border-red-100 dark:border-red-800">
             <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
             BLT Monitor Extension
           </div>
-          <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight text-gray-900">Reliable monitoring for every BLT surface</h1>
-          <p class="text-sm sm:text-base text-gray-600 mt-3 max-w-xl">Track uptime, keyword health, response trends, and monitor history from one dashboard. Designed for practical operations and fast triage.</p>
+          <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight text-gray-900 dark:text-gray-100">Reliable monitoring for every BLT surface</h1>
+          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-3 max-w-xl">Track uptime, keyword health, response trends, and monitor history from one dashboard. Designed for practical operations and fast triage.</p>
 
           <div class="mt-5 flex flex-wrap gap-2.5">
             <a href="https://github.com/OWASP-BLT/BLT-Monitor/actions/workflows/website-monitor.yml" rel="noopener noreferrer" target="_blank"
@@ -159,32 +186,32 @@
 
         <div class="grid sm:grid-cols-2 gap-3">
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-active-bg dark:bg-red-900/30 text-primary flex items-center justify-center mb-2">
               <i class="fa-solid fa-sitemap" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Multi-monitor ready</h2>
-            <p class="text-xs text-gray-600 mt-1">Monitor many BLT endpoints from one unified list and drill into details quickly.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Multi-monitor ready</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Monitor many BLT endpoints from one unified list and drill into details quickly.</p>
           </article>
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-active-bg dark:bg-red-900/30 text-primary flex items-center justify-center mb-2">
               <i class="fa-solid fa-wave-square" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Trend visibility</h2>
-            <p class="text-xs text-gray-600 mt-1">Instant sparklines and historical charts reveal latency spikes and anomalies.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Trend visibility</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Instant sparklines and historical charts reveal latency spikes and anomalies.</p>
           </article>
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-active-bg dark:bg-red-900/30 text-primary flex items-center justify-center mb-2">
               <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Keyword checks</h2>
-            <p class="text-xs text-gray-600 mt-1">Validate expected page content so silent rendering/content issues don’t go unnoticed.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Keyword checks</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Validate expected page content so silent rendering/content issues don’t go unnoticed.</p>
           </article>
           <article class="surface-card rounded-xl p-4">
-            <div class="h-10 w-10 rounded-lg bg-red-50 text-primary flex items-center justify-center mb-2">
+            <div class="h-10 w-10 rounded-lg bg-active-bg dark:bg-red-900/30 text-primary flex items-center justify-center mb-2">
               <i class="fa-solid fa-bell" aria-hidden="true"></i>
             </div>
-            <h2 class="font-bold text-sm text-gray-900">Slack alerting</h2>
-            <p class="text-xs text-gray-600 mt-1">Failure notifications keep maintainers informed during outages or content mismatches.</p>
+            <h2 class="font-bold text-sm text-gray-900 dark:text-gray-100">Slack alerting</h2>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Failure notifications keep maintainers informed during outages or content mismatches.</p>
           </article>
         </div>
       </div>
@@ -193,23 +220,23 @@
     <section class="surface-card rounded-2xl p-5 sm:p-6">
       <div class="flex items-center gap-2 mb-4">
         <i class="fa-solid fa-gears text-primary" aria-hidden="true"></i>
-        <h2 class="text-lg font-extrabold text-gray-900">How BLT Monitor is used</h2>
+        <h2 class="text-lg font-extrabold text-gray-900 dark:text-gray-100">How BLT Monitor is used</h2>
       </div>
       <div class="grid md:grid-cols-3 gap-4">
-        <article class="rounded-xl border border-neutral-border p-4 bg-white">
-          <p class="text-xs text-red-700 font-bold">01</p>
-          <h3 class="text-sm font-bold mt-1">Define monitors</h3>
-          <p class="text-xs text-gray-600 mt-1">Set `id`, `url`, and `keyword` in `monitors.json` for each service or page.</p>
+        <article class="rounded-xl border border-neutral-border p-4 bg-white dark:bg-dark-surface">
+          <p class="text-xs text-primary font-bold">01</p>
+          <h3 class="text-sm font-bold mt-1 dark:text-gray-100">Define monitors</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Set `id`, `url`, and `keyword` in `monitors.json` for each service or page.</p>
         </article>
-        <article class="rounded-xl border border-neutral-border p-4 bg-white">
-          <p class="text-xs text-red-700 font-bold">02</p>
-          <h3 class="text-sm font-bold mt-1">Automatic checks</h3>
-          <p class="text-xs text-gray-600 mt-1">GitHub Actions runs every 5 minutes, writes status CSVs, and updates the dashboard.</p>
+        <article class="rounded-xl border border-neutral-border p-4 bg-white dark:bg-dark-surface">
+          <p class="text-xs text-primary font-bold">02</p>
+          <h3 class="text-sm font-bold mt-1 dark:text-gray-100">Automatic checks</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">GitHub Actions runs every 5 minutes, writes status CSVs, and updates the dashboard.</p>
         </article>
-        <article class="rounded-xl border border-neutral-border p-4 bg-white">
-          <p class="text-xs text-red-700 font-bold">03</p>
-          <h3 class="text-sm font-bold mt-1">Respond quickly</h3>
-          <p class="text-xs text-gray-600 mt-1">Use badges, trends, and alerts to catch issues early and recover faster.</p>
+        <article class="rounded-xl border border-neutral-border p-4 bg-white dark:bg-dark-surface">
+          <p class="text-xs text-primary font-bold">03</p>
+          <h3 class="text-sm font-bold mt-1 dark:text-gray-100">Respond quickly</h3>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Use badges, trends, and alerts to catch issues early and recover faster.</p>
         </article>
       </div>
     </section>
@@ -217,11 +244,11 @@
     <section class="surface-card rounded-2xl p-5 sm:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
         <div>
-          <h2 class="text-lg sm:text-xl font-extrabold flex items-center gap-2 text-gray-900">
+          <h2 class="text-lg sm:text-xl font-extrabold flex items-center gap-2 text-gray-900 dark:text-gray-100">
             <i class="fa-solid fa-globe text-primary" aria-hidden="true"></i>
             Website Monitors
           </h2>
-          <p class="text-sm text-gray-600 mt-1">Browse current monitor health and open each monitor for full details.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Browse current monitor health and open each monitor for full details.</p>
         </div>
 
         <label for="monitor-search" class="relative block w-full sm:w-80">
@@ -355,7 +382,7 @@
     card.setAttribute('tabindex', '0');
     card.setAttribute('role', 'link');
     card.setAttribute('aria-label', `View details for ${monitor.name}`);
-    card.className = 'card-hover block surface-card rounded-xl p-3 sm:p-4 cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600';
+    card.className = 'card-hover block surface-card rounded-xl p-3 sm:p-4 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary';
 
     let statusBadgeClass = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-gray-100 text-gray-600 border-gray-200';
     let statusIcon = '<i class="fa-solid fa-circle-question" aria-hidden="true"></i> Unknown';
@@ -437,9 +464,10 @@
 
     const recentRows = rows.slice(-20).filter(r => !isNaN(parseInt(r[1])));
     const data = recentRows.map(r => parseInt(r[1]));
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--blt-primary').trim() || '#E10101';
     const pointColors = recentRows.map(r =>
       (r[2] === 'success' && r[3] === 'found') ? '#059669' :
-      (r[2] === 'success' ? '#d97706' : '#E10101')
+      (r[2] === 'success' ? '#d97706' : primaryColor)
     );
 
     if (data.length === 0) return;
@@ -451,8 +479,8 @@
         datasets: [{
           data,
           fill: true,
-          borderColor: '#E10101',
-          backgroundColor: 'rgba(225, 1, 1, 0.08)',
+          borderColor: primaryColor,
+          backgroundColor: primaryColor + '14',
           pointBackgroundColor: pointColors,
           pointBorderColor: '#ffffff',
           pointBorderWidth: 1,
