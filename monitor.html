@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Monitor</title>
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -142,7 +147,7 @@
                   <span id="monitor-name">Website Monitor</span>
                 </h1>
 
-                <div class="flex items-center gap-1.5 text-gray-600 mt-1.5">
+                <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 mt-1.5">
                   <i class="fa-solid fa-link text-sm text-gray-400" aria-hidden="true"></i>
                   <a id="monitor-url" href="#" target="_blank" rel="noopener noreferrer" class="link-primary break-all text-sm">
                     Loading...
@@ -271,12 +276,12 @@
             <li>Go to your Slack workspace and create a new Slack App:
               <a href="https://api.slack.com/apps" target="_blank" class="link-primary" rel="noopener noreferrer">https://api.slack.com/apps</a>
             </li>
-            <li>Enable <strong class="text-gray-900">Incoming Webhooks</strong> for the app.</li>
+            <li>Enable <strong class="text-gray-900 dark:text-gray-100">Incoming Webhooks</strong> for the app.</li>
             <li>Create a new webhook URL and copy it.</li>
-            <li>Go to your GitHub repository settings &rarr; <strong class="text-gray-900">Secrets and variables</strong> &rarr; <strong class="text-gray-900">Actions</strong>.</li>
-            <li>Click <strong class="text-gray-900">New repository secret</strong> and add:<br>
-              <strong class="text-gray-900">Name:</strong> <code class="bg-gray-100 text-primary px-1 rounded">SLACK_WEBHOOK_URL</code><br>
-              <strong class="text-gray-900">Value:</strong> (paste your Slack webhook URL)
+            <li>Go to your GitHub repository settings &rarr; <strong class="text-gray-900 dark:text-gray-100">Secrets and variables</strong> &rarr; <strong class="text-gray-900 dark:text-gray-100">Actions</strong>.</li>
+            <li>Click <strong class="text-gray-900 dark:text-gray-100">New repository secret</strong> and add:<br>
+              <strong class="text-gray-900 dark:text-gray-100">Name:</strong> <code class="bg-gray-100 dark:bg-gray-700 text-primary px-1 rounded">SLACK_WEBHOOK_URL</code><br>
+              <strong class="text-gray-900 dark:text-gray-100">Value:</strong> (paste your Slack webhook URL)
             </li>
           </ol>
         </details>
@@ -492,8 +497,8 @@
           const time = new Date(r[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
           const rowBg = i % 2 === 1 ? 'style="background:var(--blt-background)"' : '';
           tbody.innerHTML += `<tr ${rowBg} class="border-b border-neutral-border">
-            <td class="p-2.5 text-gray-600">${time}</td>
-            <td class="p-2.5 text-gray-900">${isNaN(rowMs) ? '--' : rowMs.toLocaleString()} ms</td>
+            <td class="p-2.5 text-gray-600 dark:text-gray-400">${time}</td>
+            <td class="p-2.5 text-gray-900 dark:text-gray-100">${isNaN(rowMs) ? '--' : rowMs.toLocaleString()} ms</td>
             <td class="p-2.5">${statusCell}</td>
             <td class="p-2.5">${keywordCell}</td>
           </tr>`;
