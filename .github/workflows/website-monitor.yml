@@ -20,25 +20,55 @@ on:
         required: false
         default: 'OWASP'
 
+concurrency:
+  group: website-monitor-${{ github.ref }}
+  cancel-in-progress: false
+
 # Set the permissions for the workflow
 permissions:
   contents: write
-  pull-requests: write
   pages: write
   id-token: write
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history for all branches and tags
 
       - name: Monitor all websites
         id: monitor
         run: |
+          fetch_url() {
+            local target_url="$1"
+            local content_var="$2"
+            local code_var="$3"
+            local fetched_content=""
+            local fetched_code=""
+            local response_body_file=""
+            local curl_exit=0
+
+            response_body_file=$(mktemp)
+            fetched_code=$(curl -sS --fail --max-time 15 --retry 2 --retry-all-errors -o "$response_body_file" -w "%{http_code}" "$target_url") || curl_exit=$?
+            if [ "$curl_exit" -eq 0 ]; then
+              fetched_content=$(cat "$response_body_file")
+            else
+              echo "Warning: failed to fetch content from $target_url (curl exit code: $curl_exit, HTTP status: ${fetched_code:-unknown})"
+              fetched_content=""
+              if [ -z "$fetched_code" ]; then
+                fetched_code="000"
+              fi
+            fi
+            rm -f "$response_body_file"
+
+            printf -v "$content_var" '%s' "$fetched_content"
+            printf -v "$code_var" '%s' "$fetched_code"
+          }
+
           # If manual trigger with custom URL, use that
           if [ -n "${{ github.event.inputs.website_url }}" ]; then
             echo "Manual trigger detected - monitoring single URL"
@@ -63,8 +93,7 @@ jobs:
 
             # Monitor the website
             start_time=$(date +%s%3N)
-            content=$(curl -s "$url")
-            response_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+            fetch_url "$url" content response_code
             end_time=$(date +%s%3N)
             duration_ms=$((end_time - start_time))
             duration_s=$(awk "BEGIN {printf \"%.3f\", $duration_ms/1000}")
@@ -91,7 +120,7 @@ jobs:
               echo "- $name ($url) - keyword '$keyword' not found" >> "$failed_monitors_file"
             fi
 
-            echo "Result: $status (keyword: $keyword_status, duration: ${duration_s}s)"
+            echo "Result: $status (http: $response_code, keyword: $keyword_status, duration: ${duration_s}s)"
 
             # Update status file for this monitor
             mkdir -p data
@@ -128,7 +157,7 @@ jobs:
           if [ -n "${{ github.event.inputs.website_url }}" ]; then
             # Manual trigger - use provided values
             start_time=$(date +%s%3N)
-            content=$(curl -s "${{ github.event.inputs.website_url }}")
+            fetch_url "${{ github.event.inputs.website_url }}" content response_code
             end_time=$(date +%s%3N)
             duration_ms=$((end_time - start_time))
 
@@ -175,7 +204,7 @@ jobs:
 
       - name: Notify Slack on failure
         if: steps.monitor.outputs.has_failures == 'true'
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.27.1
         with:
           payload: |
             {
